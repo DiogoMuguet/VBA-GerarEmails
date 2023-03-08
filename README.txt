@@ -1,0 +1,1 @@
+Script usado para gerar o arquivo CSV necessário para a criação em massa de contas de e-mail no Admin Console do Google. O script gera o endereço de e-mail e a senha de todos os usuários listados na planilha, usando o nome e a matrícula, e monta o CSV de acordo com o modelo solicitado pelo Google, salvando-o na pasta definida na variável "caminho".

@@ -1,0 +1,91 @@
+Function gerarEmails()
+
+    Dim nome, prinome, ultnome, mail, matricula, senha, part1, part2, resultado As String
+    Dim arq As Integer
+    
+    arq = FreeFile
+    caminho = "P:\E-Mails\"
+    nomearq = "emailsAlunos-AllStars"
+    cabeca = "First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Password Hash Function [UPLOAD ONLY],Org Unit Path [Required],New Primary Email [UPLOAD ONLY],Recovery Email,Home Secondary Email,Work Secondary Email,Recovery Phone [MUST BE IN THE E.164 FORMAT],Work Phone,Home Phone,Mobile Phone,Work Address,Home Address,Employee ID,Employee Type,Employee Title,Manager Email,Department,Cost Center,Building ID,Floor Name,Floor Section,Change Password at Next Sign-In,New Status [UPLOAD ONLY],Advanced Protection Program enrollment"
+    
+    'Saída:
+    'Nome, Sobrenome, email, senha & ,,/,,,,,,,,,,,,,,,,,,,,False,,False
+
+    For rep = 1 To 1120
+        
+        If (Range("B" & rep) <> "" And Range("D" & rep) = "") Then
+        
+            matricula = (Range("C" & rep).Value)
+            nome = (Range("B" & rep).Value)
+            
+			'é necessário separar o primeiro e o último nome do nome completo
+            nome = Split(nome)
+            
+			'e remover os acentos do primeiro e do último nome
+            prinome = LCase(nome(0))
+            prinome = Replace(prinome, "ã", "a")
+            prinome = Replace(prinome, "á", "a")
+            prinome = Replace(prinome, "â", "a")
+            prinome = Replace(prinome, "õ", "o")
+            prinome = Replace(prinome, "ó", "o")
+            prinome = Replace(prinome, "ô", "o")
+            prinome = Replace(prinome, "é", "e")
+            prinome = Replace(prinome, "ê", "e")
+            prinome = Replace(prinome, "ç", "c")
+            prinome = Replace(prinome, "í", "i")
+            prinome = Replace(prinome, "ú", "u")
+            prinome = Replace(prinome, "'", "")
+            
+			'aqui transformamos a primeira letra do primeiro nome em maiúsculo
+            tamanho = Len(prinome)
+            part1 = UCase(Left(prinome, 1))
+            part2 = LCase(Right(prinome, (tamanho - 1)))
+            prinome = part1 & part2
+            
+            ultnome = LCase(nome(UBound(nome)))
+            ultnome = Replace(ultnome, "ã", "a")
+            ultnome = Replace(ultnome, "á", "a")
+            ultnome = Replace(ultnome, "â", "a")
+            ultnome = Replace(ultnome, "õ", "o")
+            ultnome = Replace(ultnome, "ó", "o")
+            ultnome = Replace(ultnome, "ô", "o")
+            ultnome = Replace(ultnome, "é", "e")
+            prinome = Replace(prinome, "ê", "e")
+            ultnome = Replace(ultnome, "ç", "c")
+            ultnome = Replace(ultnome, "í", "i")
+            ultnome = Replace(ultnome, "ú", "u")
+            ultnome = Replace(ultnome, "'", "")
+            
+			'aqui transformamos a primeira letra do último nome em maiúsculo
+            tamanho = Len(ultnome)
+            part1 = UCase(Left(ultnome, 1))
+            part2 = LCase(Right(ultnome, (tamanho - 1)))
+            ultnome = part1 & part2
+            
+			'finalmente, o endereço de e-mail e senha são gerados
+            mail = LCase(prinome) & "." & matricula & "@exemplo.net"
+            senha = matricula & "@exemplo"
+            
+            Range("I" & rep) = mail 'escreve o endereço de e-mail criado na coluna G
+            Range("J" & rep) = senha 'escreve a senha criada na coluna H
+            
+			'adicionamos a linha gerada à variável 'resultado', para ser inscrita no arquivo 
+            If (resultado <> "") Then
+                resultado = resultado & vbCr & prinome & "," & ultnome & "," & mail & "," & senha & ",,/,,,,,,,,,,,,,,,,,,,,False,,False"
+            Else
+                resultado = prinome & "," & ultnome & "," & mail & "," & senha & ",,/,,,,,,,,,,,,,,,,,,,,False,,False"
+            End If
+            
+        End If
+        
+    Next rep
+    
+	'escrevemos o cabeçalho definido pelo Google e as linhas geradas no arquivo
+    nomearq = nomearq & ".csv"
+
+    Open caminho & nomearq For Output As #arq
+        Print #arq, cabeca
+        Print #arq, resultado
+    Close #arq
+
+End Function
